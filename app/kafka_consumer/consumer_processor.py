@@ -49,24 +49,41 @@ class ConsumerProcessor:
         logger.info("Shutting down consumer...")
         self.consumer.close()
         sys.exit(0)
+    
+    def __retrieve_message(self) -> str:
+        """Retrieve the message from the Kafka message."""
+        while self:
+            message = self.consumer.poll(timeout=1.0)
+            if message is None:
+                continue
+            if message.error():
+                if message.error().code() == KafkaError._PARTITION_EOF:
+                    logger.info(f"End of partition reached {message.partition()}")
+                elif message.error():
+                    logger.error(f"Error occurred: {message.error().str()}")
+                    break
+            else:
+                message = message.value().decode('utf-8')       
+                return message
 
-    def poll_messages(self):
+    def poll_messages(self) -> None:
         """Continuously poll for messages from subscribed topics."""
+        message = self.__retrieve_message()
         try:
             while True:
-                msg = self.consumer.poll(timeout=1.0)
+                msg = message
                 if msg is None:
                     continue
-                if msg.error():
-                    if msg.error().code() == KafkaError._PARTITION_EOF:
-                        logger.info(f"End of partition reached {msg.partition()}")
-                    elif msg.error():
-                        logger.error(f"Error occurred: {msg.error().str()}")
-                        break
                 else:
-                    self.__log_message(msg.value().decode('utf-8'))
+                    self.__log_message(msg)
         except KeyboardInterrupt:
             self.signal_handler(signal.SIGINT, None)
+
+    def calc_elapsed_time(self, message):
+        """Calculate the elapsed time between the current time and the time the message was sent."""
+        pass
+
+        
 
 # Register signal handlers for graceful termination
 consumer_processor = ConsumerProcessor()

@@ -9,9 +9,9 @@ This project provides an email service designed to act as an email plugin module
 - **Integration Ready**: Designed as a plug-and-play module for existing notification systems using Kakfa based system messaging.
 - **Customizable Settings**: Configure SMTP settings, email content, and more through a user-friendly interface.
 
-## Email Infrastructure
+## Pre-Production Email Infrastructure
 
-The email infrastructure is designed to ensure reliable and correct email delivery in a pre-production environment. It includes the following components:
+Email infrastructure is designed to ensure reliable and correct email delivery in a pre-production environment that can eventually be rolled out into a production enviornmnet  It includes the following components:
 
 - **Mail Submission Agent (MSA)**: Acts as a liaison between the Mail Transfer Agent (MTA) and the Mail User Agent (MUA) to guarantee that emails are proofread in a sandbox before being sent.
 - **Mail Transfer Agent (MTA)**: Manages the actual email sending process. The system is set up to mimic email delivery without really sending emails, ensuring that any potential problems are found and fixed.

@@ -79,7 +79,7 @@ class ConsumerProcessor:
         except KeyboardInterrupt:
             self.signal_handler(signal.SIGINT, None)
 
-    def calc_elapsed_time(self, message):
+    def calc_elapsed_time(self,):
         """Calculate the elapsed time between the current time and the time the message was sent."""
         pass
 

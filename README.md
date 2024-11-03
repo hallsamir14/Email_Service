@@ -64,7 +64,9 @@ This architecture ensures that the email service is decoupled from the main appl
      ```
      python main.py
      ```
-
+## Quick Developer Guide:
+  Source Code: app/
+  
 ## Unit Testing:
 
 **Tests are made using pytests.**

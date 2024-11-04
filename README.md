@@ -35,6 +35,12 @@ This email service leverages a Kafka-based event-driven architecture to handle e
 5. **Delivery Confirmation**: The MTA delivers the email to the recipient's mail server, and the email service logs the delivery status.
 
 This architecture ensures that the email service is decoupled from the main application logic, allowing for independent scaling and maintenance. It also provides reliability through Kafka's fault-tolerant design, ensuring that no email events are lost.
+## Modules
+**Source Code: /app/**
+| Source code file name          | Description                                                                 |
+|----------------------|-----------------------------------------------------------------------------|
+| app/emailer.py (Incomplete) | Contains the emailer class. Instance of the emailer class is to be used for ... |
+| app/utils/database_connection | Contains db_connect class. Each instance of db_connect class represesnts a connection to a database.
 
 ## Local Configuration & Setup
 
@@ -64,9 +70,7 @@ This architecture ensures that the email service is decoupled from the main appl
      ```
      python main.py
      ```
-## Quick Developer Guide:
-  Source Code: app/
-  
+
 ## Unit Testing:
 
 **Tests are made using pytests.**

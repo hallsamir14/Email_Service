@@ -40,6 +40,10 @@ class ConsumerProcessor:
             logger.error(f"Failed to initialize Kafka consumer: {init_consumer_error}")
             sys.exit(1)
 
+        # Register signal handlers for graceful termination
+        signal.signal(signal.SIGINT, self.signal_handler)
+        signal.signal(signal.SIGTERM, self.signal_handler)
+
     def __log_message(self, message):
         """Log the processing of each message."""
         logger.info(f"Processing message: {message}")
@@ -50,9 +54,10 @@ class ConsumerProcessor:
         self.consumer.close()
         sys.exit(0)
     
-    def __retrieve_message(self) -> str:
-        """Retrieve the message from the Kafka message."""
+    def poll_messages(self):
+        """Poll messages continuously from the subscribed topics."""
         while self:
+            #Instance of polling a message w/ polling interval
             message = self.consumer.poll(timeout=1.0)
             if message is None:
                 continue
@@ -64,21 +69,14 @@ class ConsumerProcessor:
                     break
             else:
                 message = message.value().decode('utf-8')       
-                return message
+                """Continuously poll for messages from subscribed topics."""
+                try:
+                    self.__log_message(message)
+                #keyboard interrupt will stop consumer polling and cleanup consumer
+                except KeyboardInterrupt:
+                    self.signal_handler(signal.SIGINT, None)
 
-    def poll_messages(self) -> None:
-        """Continuously poll for messages from subscribed topics."""
-        message = self.__retrieve_message()
-        try:
-            while True:
-                msg = message
-                if msg is None:
-                    continue
-                else:
-                    self.__log_message(msg)
-        except KeyboardInterrupt:
-            self.signal_handler(signal.SIGINT, None)
-
+ 
     def calc_elapsed_time(self,):
         """Calculate the elapsed time between the current time and the time the message was sent."""
         pass
@@ -87,8 +85,7 @@ class ConsumerProcessor:
 
 # Register signal handlers for graceful termination
 consumer_processor = ConsumerProcessor()
-signal.signal(signal.SIGINT, consumer_processor.signal_handler)
-signal.signal(signal.SIGTERM, consumer_processor.signal_handler)
+
 
 # Start polling for messages
 consumer_processor.poll_messages()

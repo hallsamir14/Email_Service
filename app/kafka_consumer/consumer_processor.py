@@ -54,11 +54,11 @@ class ConsumerProcessor:
         self.consumer.close()
         sys.exit(0)
     
-    def poll_messages(self):
+    def poll_messages(self, polling_interval: float = 1.0):
         """Poll messages continuously from the subscribed topics."""
         while self:
             #Instance of polling a message w/ polling interval
-            message = self.consumer.poll(timeout=1.0)
+            message = self.consumer.poll(polling_interval)
             if message is None:
                 continue
             if message.error():
@@ -75,6 +75,16 @@ class ConsumerProcessor:
                 #keyboard interrupt will stop consumer polling and cleanup consumer
                 except KeyboardInterrupt:
                     self.signal_handler(signal.SIGINT, None)
+    
+        #TODO think about how to handle the message to be stored on consumer side
+        '''
+        Why do we want to cache messages on the consumer side if the kafka cluster stores messages persistently?
+        Would would caching messages allow us to do that we can't do with the kafka cluster?
+        
+        '''
+        def store_message(self, message_store_array):
+            """Store the decoded message in an array."""
+            pass
 
  
     def calc_elapsed_time(self,):

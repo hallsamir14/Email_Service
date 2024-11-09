@@ -41,8 +41,8 @@ This architecture ensures that the email service is decoupled from the main appl
 |----------------------|-----------------------------------------------------------------------------|
 | app/emailer.py (Incomplete) | Contains the emailer class. Instance of the emailer class is to be used for ... |
 | app/utils/database_connection | Contains db_connect class. Each instance of db_connect class represesnts a connection to a database. |
-| app/kafka_consumer/consumer_config.py | Loads environment variables and sets up logging configuration for a Kafka consumer application, providing defaults and logging any unset environment variables |
-|app/kakfa_consumer/consumer_processor.py | Tests how much time elapses between first and last message received. |
+| app/kafka_consumer/consumer_config.py | Contains the ```Config()``` class.Loads kafka and logging configuration to be used by the ```consumer_processor()``` class, providing defaults and logging any unset config variables |
+|app/kakfa_consumer/consumer_processor.py | Contains the ```consumer_processor``` class. A wrapper around kafka's ```consumer()```, providing core processing operations of messages being pulled off a topic. |
 
 ## Local Configuration & Setup
 

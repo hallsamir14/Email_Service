@@ -55,7 +55,7 @@ class ConsumerProcessor:
         sys.exit(0)
     
     def poll_messages(self, polling_interval: float = 1.0):
-        """Poll messages continuously from the subscribed topics."""
+        """Poll messages continuously from the subscribed topics and display them via info log."""
         while self:
             #Instance of polling a message w/ polling interval
             message = self.consumer.poll(polling_interval)

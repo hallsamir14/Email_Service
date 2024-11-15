@@ -59,7 +59,7 @@ services:
   #TODO: fix issue where database is not being created within mockDB conatiner
   mysql:
     build:
-      context: ./mockDB
+      context: ./sandbox/mock_database
       dockerfile: Dockerfile
     ports:
       - "3306:3306"

@@ -36,9 +36,11 @@ class TestSMTP:
         server = smtplib.SMTP(settings.server, settings.port)
         server.starttls()
 
-        connection = server.noop()[0]         # NO OPERATION COMMAND, server will set back set command codes based o status                          
+        connection = server.noop()[
+            0
+        ]  # NO OPERATION COMMAND, server will set back set command codes based o status
 
-        assert connection == 250               # code 250 is sent on successful conection
+        assert connection == 250  # code 250 is sent on successful conection
         server.quit()
 
     def test_login(self, settings):  # ensure valid login credentials

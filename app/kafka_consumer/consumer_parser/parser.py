@@ -1,5 +1,5 @@
-#consumer parser class will parse message and return data in parsed message
-'''
+# consumer parser class will parse message and return data in parsed message
+"""
 Params to determine general message structure and format? 
 - - - These params will enable message parser to understand how to read the message
     - attributes/attribute defintions
@@ -14,6 +14,4 @@ Parser general methods/operations (draft)
     - send data somehere (this is why it needs to be stored) to be used by application
     - #TODO - - - Brainstorm more possible operations that parser may need.
     
-
-
-'''
+"""

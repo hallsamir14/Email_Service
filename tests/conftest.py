@@ -1,8 +1,9 @@
 import os
 
-#place all parser.addoptions in this file
-#centralized location to place docker file paths to be used in integration test
-#docker_compose_file = pytestconfig.getoption("docker_file_option_specified_here") 
+
+# place all parser.addoptions in this file
+# centralized location to place docker file paths to be used in integration test
+# docker_compose_file = pytestconfig.getoption("docker_file_option_specified_here")
 def pytest_addoption(parser):
     conftest_dir = os.path.dirname(os.path.abspath(__file__))
     # get current directory

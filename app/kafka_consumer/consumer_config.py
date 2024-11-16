@@ -22,16 +22,17 @@ class Config:
             "AUTO_OFFSET_RESET", "earliest"
         )  # Can be set to 'latest' or 'earliest'
 
-        #"""
+        # """
+
     def set_logger(self, logging_file: str = "logging_config.json"):
         # Load logging configuration from external JSON file
         with open(logging_file, "r") as config_file:
             self.logging_config = json.load(config_file)
             logging.config.dictConfig(self.logging_config)
-        
+
         self.logger = logging.getLogger(__name__)
         return self.logger
-        #"""
+        # """
 
     def check_env_variable(self, var_name, default_value) -> None:
         value = os.getenv(var_name, default_value)

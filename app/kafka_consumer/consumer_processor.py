@@ -15,11 +15,11 @@ settings.check_env_variable("CONSUMER_GROUP", "my_consumer_group")
 settings.check_env_variable("AUTO_OFFSET_RESET", "earliest")
 
 # Define the ConsumerProcessor class to process messages from Kafka
-'''
+"""
 Consumer Processor is a wrapper around the Kafka Consumer that subscribes to the commands topic and processes messages.
 It initializes the Kafka Consumer with the required settings and subscribes to the commands topic.
 The way in which a message is processed will be determined by a variety of methods that will be defined in the class.
-'''
+"""
 
 
 class ConsumerProcessor:
@@ -53,11 +53,11 @@ class ConsumerProcessor:
         logger.info("Shutting down consumer...")
         self.consumer.close()
         sys.exit(0)
-    
+
     def poll_messages(self, polling_interval: float = 1.0):
         """Poll messages continuously from the subscribed topics and display them via info log."""
         while self:
-            #Instance of polling a message w/ polling interval
+            # Instance of polling a message w/ polling interval
             message = self.consumer.poll(polling_interval)
             if message is None:
                 continue
@@ -68,30 +68,31 @@ class ConsumerProcessor:
                     logger.error(f"Error occurred: {message.error().str()}")
                     break
             else:
-                message = message.value().decode('utf-8')       
+                message = message.value().decode("utf-8")
                 """Continuously poll for messages from subscribed topics."""
                 try:
                     self.__log_message(message)
-                #keyboard interrupt will stop consumer polling and cleanup consumer
+                # keyboard interrupt will stop consumer polling and cleanup consumer
                 except KeyboardInterrupt:
                     self.signal_handler(signal.SIGINT, None)
-    
-        #TODO think about how to handle the message to be stored on consumer side
-        '''
+
+        # TODO think about how to handle the message to be stored on consumer side
+        """
         Why do we want to cache messages on the consumer side if the kafka cluster stores messages persistently?
         Would would caching messages allow us to do that we can't do with the kafka cluster?
         
-        '''
+        """
+
         def store_message(self, message_store_array):
             """Store the decoded message in an array."""
             pass
 
- 
-    def calc_elapsed_time(self,):
+    def calc_elapsed_time(
+        self,
+    ):
         """Calculate the elapsed time between the current time and the time the message was sent."""
         pass
 
-        
 
 # Register signal handlers for graceful termination
 consumer_processor = ConsumerProcessor()

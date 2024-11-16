@@ -1,7 +1,8 @@
 import pytest
 
 from app.utils.template_manager import TemplateManager
-#other template manager test are private so just make sure .render_template runs with no errors
+
+# other template manager test are private so just make sure .render_template runs with no errors
 
 
 class TestTemplateMngr:
@@ -17,4 +18,3 @@ class TestTemplateMngr:
             verification_url="http://example.com/verify/1234",
         )
         assert isinstance(content, str) == True  # ensure content is of type string
-

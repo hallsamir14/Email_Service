@@ -5,11 +5,14 @@ import mysql.connector
 from mysql.connector import Error
 import docker
 
+
 class TestDatabase:
     @pytest.fixture(scope="module", autouse=True)
     def start_docker_compose(self, pytestconfig):
 
-        docker_compose_file = pytestconfig.getoption("docker_compose_ecommerce")    #get docker compose file, get option retrieves value for command line option
+        docker_compose_file = pytestconfig.getoption(
+            "docker_compose_ecommerce"
+        )  # get docker compose file, get option retrieves value for command line option
         client = docker.from_env()
 
         if docker_compose_file:
@@ -34,7 +37,6 @@ class TestDatabase:
                 container.stop()
                 container.remove()
 
-
     @pytest.fixture(scope="module")
     def database_connection(self):
         # Wait for MySQL to be ready (increase if needed)
@@ -55,13 +57,11 @@ class TestDatabase:
         else:
             pytest.fail("Database didn't become ready in time")
 
-
     @pytest.fixture(scope="function")
     def db_cursor(self, database_connection):
         cursor = database_connection.cursor(buffered=True)  # get curser
         yield cursor  # yield cursor to other test
         cursor.close()
-
 
     def test_database_table_exists(self, db_cursor):
         # db_cursor is injected here too
@@ -69,9 +69,10 @@ class TestDatabase:
         result = db_cursor.fetchone()
         assert result is not None, "Users table does not exist"
 
-
     def test_database_values_exist(self, db_cursor):
         # db_cursor is injected here too
-        db_cursor.execute("SELECT * FROM users")  # ensure there are values in users table
+        db_cursor.execute(
+            "SELECT * FROM users"
+        )  # ensure there are values in users table
         result = db_cursor.fetchone()
         assert result is not None, "No data in table"

@@ -11,7 +11,7 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
 # import SMTP_connection object
-from app.utils.SMTP_connection import smtp_Settings
+from app.utils.smpt_connection import smtp_Settings
 
 """
 Emailer class is not necessary as send_email can be used as a stand alone function,

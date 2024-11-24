@@ -1,11 +1,11 @@
 import sys
 import json
 import signal
-from consumer_config import Config
+from consumer_config import ConsumerConfig
 from confluent_kafka import Consumer, KafkaError
 
 # Initialize the Config class to load environment variables and set up logging
-settings = Config()
+settings = ConsumerConfig()
 logger = settings.set_logger()
 
 # Check if the required environment variables are set, otherwise log a warning/disclaimer
@@ -14,7 +14,7 @@ settings.check_env_variable("COMMANDS_TOPIC", "kafka_commands")
 settings.check_env_variable("CONSUMER_GROUP", "my_consumer_group")
 settings.check_env_variable("AUTO_OFFSET_RESET", "earliest")
 
-# Define the ConsumerProcessor class to process messages from Kafka
+# Define the ConsumerProcessor class to process messages from Kafka producer
 """
 Consumer Processor is a wrapper around the Kafka Consumer that subscribes to the commands topic and processes messages.
 It initializes the Kafka Consumer with the required settings and subscribes to the commands topic.
@@ -83,20 +83,18 @@ class ConsumerProcessor:
         
         """
 
-        def store_message(self, message_store_array):
-            """Store the decoded message in an array."""
-            pass
-
-    def calc_elapsed_time(
-        self,
-    ):
-        """Calculate the elapsed time between the current time and the time the message was sent."""
+    def store_message(self, message_store_array):
+        """Store the decoded message in an array."""
         pass
 
+#main function entry block dev testing execution only--------------
+def main():
+    # Register signal handlers for graceful termination
+    consumer_processor = ConsumerProcessor()
 
-# Register signal handlers for graceful termination
-consumer_processor = ConsumerProcessor()
 
+    # Start polling for messages
+    consumer_processor.poll_messages()
 
-# Start polling for messages
-consumer_processor.poll_messages()
+if __name__ == "__main__":
+    main()

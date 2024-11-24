@@ -6,7 +6,7 @@ import os
 
 
 # Config class encapsulate parameters for consumer logging and consumer configuration
-class Config:
+class ConsumerConfig:
     # Load settings from environment variables or use default values
     def __init__(self):
 

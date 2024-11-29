@@ -5,7 +5,7 @@ from confluent_kafka import Consumer, KafkaError
 
 # Initialize the Config class to load environment variables and set up logging
 settings = ConsumerConfig()
-logger = settings.set_logger()
+consumer_logger = settings.set_logger_config()
 
 # Check if the required environment variables are set, otherwise log a warning/disclaimer
 settings.check_env_variable("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
@@ -34,9 +34,11 @@ class ConsumerProcessor:
             )
             # Subscribe to multiple topics
             self.consumer.subscribe([settings.commands_topic])
-            logger.info("Kafka consumer initialized and subscribed to topics.")
+            consumer_logger.info("Kafka consumer initialized and subscribed to topics.")
         except Exception as init_consumer_error:
-            logger.error(f"Failed to initialize Kafka consumer: {init_consumer_error}")
+            consumer_logger.error(
+                f"Failed to initialize Kafka consumer: {init_consumer_error}"
+            )
             sys.exit(1)
 
         # Register signal handlers for graceful termination
@@ -45,11 +47,11 @@ class ConsumerProcessor:
 
     def __log_message(self, message):
         """Log the processing of each message."""
-        logger.info(f"Processing message: {message}")
+        consumer_logger.info(f"Processing message: {message}")
 
     def signal_handler(self, signal, frame):
         """Graceful shutdown of the consumer on receiving SIGINT or SIGTERM."""
-        logger.info("Shutting down consumer...")
+        consumer_logger.info("Shutting down consumer...")
         self.consumer.close()
         sys.exit(0)
 
@@ -62,9 +64,11 @@ class ConsumerProcessor:
                 continue
             if message.error():
                 if message.error().code() == KafkaError._PARTITION_EOF:
-                    logger.info(f"End of partition reached {message.partition()}")
+                    consumer_logger.info(
+                        f"End of partition reached {message.partition()}"
+                    )
                 elif message.error():
-                    logger.error(f"Error occurred: {message.error().str()}")
+                    consumer_logger.error(f"Error occurred: {message.error().str()}")
                     break
             else:
                 message = message.value().decode("utf-8")
@@ -83,17 +87,18 @@ class ConsumerProcessor:
         """
 
     def store_message(self, message_store_array):
-        """Store the decoded message in an array."""
+        """Store the decoded message in an array?"""
         pass
 
-#main function entry block dev testing execution only--------------
+
+# main function entry block dev testing execution only--------------
 def main():
     # Register signal handlers for graceful termination
     consumer_processor = ConsumerProcessor()
 
-
     # Start polling for messages
     consumer_processor.poll_messages()
+
 
 if __name__ == "__main__":
     main()

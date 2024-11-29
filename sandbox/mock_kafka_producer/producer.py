@@ -28,22 +28,11 @@ import json
 import logging, logging.config
 import argparse
 from confluent_kafka import Producer, KafkaError
-from pydantic_settings import BaseSettings
+from producer_config import Config
 from datetime import datetime
 
 
-
-class Settings(BaseSettings):
-    kafka_bootstrap_servers: str = "localhost:9092"  # Kafka server address
-    commands_topic: str = "kafka_commands"  # Kafka topic to publish messages
-    poll_interval: float = 0.1  # Polling interval in seconds for Kafka producer
-
-    class Config:
-        env_file = ".env"  # Configuration file for environment variables
-        env_file_encoding = "utf-8"
-
-
-settings = Settings()
+settings = Config()
 
 # Load logging configuration from a JSON file to setup structured logging
 with open("logging_config.json", "r") as config_file:
@@ -105,7 +94,8 @@ def parse_arguments():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+# main function entry block dev testing execution only--------------
+def main():
     args = parse_arguments()
     try:
         loop = asyncio.get_event_loop()
@@ -115,3 +105,7 @@ if __name__ == "__main__":
     finally:
         producer.flush(30)  # Ensure all messages are sent before shutting down
         logger.info("Flushing remaining messages...")
+
+
+if __name__ == "__main__":
+    main()

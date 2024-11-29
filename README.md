@@ -26,16 +26,15 @@ This email service leverages a Kafka-based event-driven architecture to handle e
 - **Kafka Broker**: Kafka brokers manage the storage and retrieval of event data, ensuring high throughput and fault tolerance.
 - **Kafka Consumer**: The email service acts as a Kafka consumer, listening to relevant topics for email events. When an event is received, the service processes the event and sends the corresponding email.
 
-### Workflow:
+### Application High-Level Flow:
 
-1. **Event Generation**: An event is generated when a specific action occurs in the application (e.g., a user signs up).
-2. **Event Emission**: User management system for application emits the event to a Kafka topic.
-3. **Event Processing**: The email service, subscribed to corresponding Kafka topic, receives the event.
+1. **Event Generation**: An event is generated when a specific action occurs in the user application (e.g., a user signs up, application monitoring metric is met).
+2. **Event Emission**: The user application emits an event, through a kafka producer, to a Kafka topic.
+3. **Event Processing**: The email service, subscribed to corresponding Kafka topic, receives and processes the messge from the topic.
 4. **Email Sending**: The email service formats the email using user defined templates and sends it using the configured MTA.
-5. **Delivery Confirmation**: The MTA delivers the email to the recipient's mail server, and the email service logs the delivery status.
 
-This architecture ensures that the email service is decoupled from the main application logic, allowing for independent scaling and maintenance. It also provides reliability through Kafka's fault-tolerant design, ensuring that no email events are lost.
-## Modules
+This architecture ensures that the email service is decoupled from the main application logic, allowing for independent scaling and maintenance. It also provides reliability through Kafka's fault-tolerant design, ensuring that no application events are lost.
+## Source Code Modules
 | Source code file name          | Description                                                                 |
 |----------------------|-----------------------------------------------------------------------------|
 | app/emailer.py (Incomplete) | Contains the ```emailer()``` class. Each instance of the emailer class represents an engine that sends emails. Each instance of the `emailer` class represents an engine responsible for sending emails. It uses SMTP settings to establish a connection to the SMTP server, formats the email content, and sends the email to the specified recipient. The class ensures that emails are sent reliably and logs the delivery status. |
@@ -48,9 +47,7 @@ This architecture ensures that the email service is decoupled from the main appl
 
 
 
-
-
-## Local Configuration & Setup
+## Local Environment Setup
 
 1. **Clone the Repository and Navigate to Root of Application**
    ```
@@ -61,7 +58,7 @@ This architecture ensures that the email service is decoupled from the main appl
    ```
 2. **Enable Development Scripts to be Executable**
    ```
-   chmod +x devops_scripts/*.sh
+   chmod +x bootstrap_scripts/*.sh
    ```
 3. **Start Application Dependencies Using Docker Compose**
    - Ensure Docker and Docker Compose are installed on your local machine.

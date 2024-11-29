@@ -27,16 +27,16 @@ class ConsumerConfig:
     def set_logger(self, logging_file: str = "logging_config.json"):
         # Load logging configuration from external JSON file
         with open(logging_file, "r") as config_file:
-            self.logging_config = json.load(config_file)
-            logging.config.dictConfig(self.logging_config)
+            logging_config = json.load(config_file)
+            logging.config.dictConfig(logging_config)
 
-        self.logger = logging.getLogger(__name__)
-        return self.logger
+        self.__logger = logging.getLogger(__name__)
+        return self.__logger
         # """
 
     def check_env_variable(self, var_name, default_value) -> None:
-        value = os.getenv(var_name, default_value)
-        if value == default_value:
+        set_environmental_value = os.getenv(var_name, default_value)
+        if set_environmental_value == default_value:
             print(
                 f"Environment variable {var_name} not set. Using default value: {default_value}"
             )

@@ -15,3 +15,5 @@ Parser general methods/operations (draft)
     - #TODO - - - Brainstorm more possible operations that parser may need.
     
 """
+import json
+import base64

@@ -1,5 +1,4 @@
 import sys
-import json
 import signal
 from consumer_config import ConsumerConfig
 from confluent_kafka import Consumer, KafkaError

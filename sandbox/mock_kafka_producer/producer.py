@@ -1,5 +1,5 @@
 """
-This script acts as a Kafka producer, designed to run in a microservice architecture where it interacts with Discord.
+This script acts as a Kafka producer, used to mock the behavior of a kafka producer within an distributed application
 It takes messages from command-line input or default messages, encodes them into JSON format, and sends them to a Kafka topic.
 The script uses asynchronous programming to handle message sending continuously.
 
@@ -25,12 +25,12 @@ Dependencies:
 import uuid
 import asyncio
 import json
-import logging
-import logging.config
+import logging, logging.config
+import argparse
 from confluent_kafka import Producer, KafkaError
 from pydantic_settings import BaseSettings
 from datetime import datetime
-import argparse
+
 
 
 class Settings(BaseSettings):

@@ -8,6 +8,8 @@ class TemplateManager:
         self.root_dir = (
             Path(__file__).resolve().parent.parent.parent
         )  # Adjust this depending on the structure
+
+        #TODO:can pass source of template assets as param?
         self.templates_dir = self.root_dir / "email_templates"
 
     def _read_template(self, filename: str) -> str:

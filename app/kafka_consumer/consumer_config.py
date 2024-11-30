@@ -6,18 +6,19 @@ import os
 
 # Config class encapsulate parameters for consumer logging and consumer configuration
 class ConsumerConfig:
-    # Load settings from environment variables or use default values
-    def __init__(self):
-        # declare logger as private data member
-        self.__logger = logging.getLogger(__name__)
 
-        # load env with dotenv utility
+    def __init__(self):
+
+        # initialize logger as private data member 
+        self.__logger = None
+
+        # Load settings from environment variables or use default values
         load_dotenv()
 
         self.kafka_bootstrap_servers = os.getenv(
             "KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"
         )  # kafka:9092 when consmer is dockerized
-        self.commands_topic = os.getenv("KAFKA_TOPIC", "kafka_commands")
+        self.kafka_topic = os.getenv("KAFKA_TOPIC", "kafka_commands")
         self.consumer_group = os.getenv("KAFKA_CONSUMER_GROUP", "my_consumer_group")
         self.auto_offset_reset = os.getenv(
             "AUTO_OFFSET_RESET", "earliest"
@@ -28,7 +29,8 @@ class ConsumerConfig:
         with open(logging_file, "r") as config_file:
             logging_config = json.load(config_file)
             logging.config.dictConfig(logging_config)
-
+            
+        self.__logger = logging.getLogger(__name__)
         return self.__logger
 
     def check_env_variable(self, var_name, default_value) -> None:

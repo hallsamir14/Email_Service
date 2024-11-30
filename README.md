@@ -1,6 +1,6 @@
 ## Overview
 
-This project provides an email service designed to act as an email plugin module. Developed in Python, this service is tailored for pre-production testing, ensuring that email notifications are correctly formatted, sent, and received before deployment. The service is designed to be implemented within a microservice based application architecture, making it easily integrable and scalable within any application ecosystem requiring email notification capabilities.
+This project provides an email service designed to act as an email plugin module. Developed in Python, this service is tailored for pre-production testing, ensuring that email notifications are correctly formatted, sent, and received before deployment. The service is designed to be implemented within a microservice based application architecture using Apaches's Kafka messaging broker, making it easily integrable and scalable within any application ecosystem, using Kafka, requiring email alerting capabilities.
 
 ## Email Module Features
 
@@ -22,9 +22,9 @@ This email service leverages a Kafka-based event-driven architecture to handle e
 
 ### Key Components:
 
-- **Kafka Producer**: The application emits email-related events (e.g., user sign-up, purchase completed) to Kafka topics.
+- **Kafka Producer**: An API for the kafka producer, implemented by the user application, emits messages of events to assigned topic.
 - **Kafka Broker**: Kafka brokers manage the storage and retrieval of event data, ensuring high throughput and fault tolerance.
-- **Kafka Consumer**: The email service acts as a Kafka consumer, listening to relevant topics for email events. When an event is received, the service processes the event and sends the corresponding email.
+- **Kafka Consumer**: The email service will use the confluent kafka consumer api to read and process messages from kafka topic. The nature of the email to be sent will be based on how consuumer processor processes the message. The power to parameterize the processing of messages by consumer processor is with the user.
 
 ### Application High-Level Flow:
 
@@ -34,8 +34,9 @@ This email service leverages a Kafka-based event-driven architecture to handle e
 4. **Email Sending**: The email service formats the email using user defined templates and sends it using the configured MTA.
 
 This architecture ensures that the email service is decoupled from the main application logic, allowing for independent scaling and maintenance. It also provides reliability through Kafka's fault-tolerant design, ensuring that no application events are lost.
+
 ## Source Code Modules
-| Source code file name          | Description                                                                 |
+| Source Code File Name          | Description                                                                 |
 |----------------------|-----------------------------------------------------------------------------|
 | app/emailer.py (Incomplete) | Contains the ```emailer()``` class. Each instance of the emailer class represents an engine that sends emails. Each instance of the `emailer` class represents an engine responsible for sending emails. It uses SMTP settings to establish a connection to the SMTP server, formats the email content, and sends the email to the specified recipient. The class ensures that emails are sent reliably and logs the delivery status. |
 | app/utils/database_connection | Contains the ```db_connect()``` class. Each instance of the db_connect class represesnts a connection to a database. |
@@ -62,7 +63,7 @@ This architecture ensures that the email service is decoupled from the main appl
    ```
 3. **Start Application Dependencies Using Docker Compose**
    - Ensure Docker and Docker Compose are installed on your local machine.
-   - Docker Compose facilitates dependencies for application so simulate fundmaental mechansims. These depedences come in the form of services and include:MySQL Database (Mock Database), Kafka Server, Kafka Producer (Mock Producer Interface) Zookeeper (Depdendecny for Kafka),
+   - Docker Compose facilitates dependencies for application to simulate communication between services that are likely to be used in a production environment. These depedencies are containerized services and include:MySQL Database (Mock User Database), Kafka Server, Kafka Producer (Mock User Producer Interface), and Zookeeper (Depdendecny for Kafka),
      ```
      docker-compose up --build -d
      ```
@@ -84,7 +85,6 @@ This architecture ensures that the email service is decoupled from the main appl
     ```
     pip install -U pytest
     ``` 
-
 
 2. **Run Pytest**
     - In root of project directory

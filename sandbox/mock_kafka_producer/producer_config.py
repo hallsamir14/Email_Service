@@ -8,6 +8,8 @@ from pydantic_settings import BaseSettings
 class Config:
 
     def __init__(self):
+
+        self.__logger = logging.getLogger(__name__)
         # load env with dotenv utility
         load_dotenv()
 
@@ -24,5 +26,11 @@ class Config:
             logging_config = json.load(config_file)
             logging.config.dictConfig(logging_config)
 
-        self.__logger = logging.getLogger(__name__)
         return self.__logger
+
+    def check_env_variable(self, var_name, default_value) -> None:
+        set_environmental_value = os.getenv(var_name, default_value)
+        if set_environmental_value == default_value:
+            self.__logger.info(
+                f"Environment variable {var_name} not set from environment. Using default value: {default_value}"
+            )

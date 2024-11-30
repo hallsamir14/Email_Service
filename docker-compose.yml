@@ -56,7 +56,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-  #TODO: fix issue where database is not being created within mockDB conatiner
+      
   mysql:
     build:
       context: ./sandbox/mock_database

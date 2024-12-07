@@ -2,15 +2,15 @@ import markdown2
 from pathlib import Path
 
 
-class TemplateManager:
+class TemplateEngine:
     def __init__(self):
         # Dynamically determine the root path of the project
-        self.root_dir = (
-            Path(__file__).resolve().parent.parent.parent
+        self.working_dir = (
+            Path(__file__).resolve().parent
         )  # Adjust this depending on the structure
 
         #TODO:can pass source of template assets as param?
-        self.templates_dir = self.root_dir / "email_templates"
+        self.working_dir = self.root_dir / "email_templates"
 
     def _read_template(self, filename: str) -> str:
         """Private method to read template content."""

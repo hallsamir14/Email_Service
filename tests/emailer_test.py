@@ -1,13 +1,13 @@
 import pytest
 
 from app.emailer import emailer
-from app.utils.template_manager import TemplateManager
+from app.template_engine.template_engine import TemplateEngine
 
 
 class TestEmail:
     @pytest.fixture
     def manager(self):
-        manager = TemplateManager()  # initialize template manager to use in email test
+        manager = TemplateEngine()  # initialize template manager to use in email test
         return manager  # pass manager into parameters of the fuctions it needs
 
     def test_email(self, manager):

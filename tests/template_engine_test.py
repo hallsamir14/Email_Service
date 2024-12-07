@@ -1,14 +1,14 @@
 import pytest
 
-from app.utils.template_manager import TemplateManager
+from app.template_engine.template_engine import TemplateEngine
 
 # other template manager test are private so just make sure .render_template runs with no errors
 
 
-class TestTemplateMngr:
+class TestTemplateEngine:
     @pytest.fixture
     def manager(self):
-        manager = TemplateManager()  # initialize template manager to use in email test
+        manager = TemplateEngine()  # initialize template manager to use in email test
         return manager
 
     def test_render_template(self, manager):

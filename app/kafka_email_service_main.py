@@ -14,14 +14,14 @@ sys.path.append(parent_dir)
 
 # Import emailer and TemplateMManger objects
 from app.emailer import emailer
-from app.utils.template_manager import TemplateManager
+from app.template_engine.template_engine import TemplateEngine
 
 if __name__ == "__main__":
     """
     In this code, we first create an instance of the `emailer` class (`emailer_instance`),
     and then call the `send_email` method on this instance.
     """
-    TemplateManager = TemplateManager()
+    TemplateManager = TemplateEngine()
 
     content: str = TemplateManager.render_template(
         "email_verification",

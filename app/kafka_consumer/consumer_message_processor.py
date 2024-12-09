@@ -15,23 +15,23 @@ class ConsumerProcessor:
     def __init__(self):
 
         # Initialize the Config class to load environment variables and set up logging
-        self.settings = ConsumerConfig()
-        self.consumer_logger = self.settings.set_logger_config()
+        settings = ConsumerConfig()
+        self.consumer_logger = settings.set_logger_config()
 
 
         # Check if the required environment variables are set, otherwise log a warning/disclaimer
-        self.settings.check_env_variable("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
-        self.settings.check_env_variable("KAFKA_TOPIC", "kafka_commands")
-        self.settings.check_env_variable("CONSUMER_GROUP", "my_consumer_group")
-        self.settings.check_env_variable("AUTO_OFFSET_RESET", "earliest")
+        settings.check_env_variable("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+        settings.check_env_variable("KAFKA_TOPIC", "kafka_commands")
+        settings.check_env_variable("CONSUMER_GROUP", "my_consumer_group")
+        settings.check_env_variable("AUTO_OFFSET_RESET", "earliest")
 
         # Initialize the Kafka Consumer with settings from the `.env` file using Config instance
         try:
             self.consumer = Consumer(
                 {
-                    "bootstrap.servers": self.settings.kafka_bootstrap_servers,
-                    "group.id": self.settings.consumer_group,
-                    "auto.offset.reset": self.settings.auto_offset_reset,
+                    "bootstrap.servers": settings.kafka_bootstrap_servers,
+                    "group.id": settings.consumer_group,
+                    "auto.offset.reset": settings.auto_offset_reset,
                 }
             )
             # Subscribe to topic

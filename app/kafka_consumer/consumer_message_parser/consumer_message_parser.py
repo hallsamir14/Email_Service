@@ -19,17 +19,17 @@ import json
 import base64
 from typing import Any
 
-#parser to be used by consumer message processor to read, validate and store message data
+
+# parser to be used by consumer message processor to read, validate and store message data
 class parser:
-    def __init__(self, schema:dict[str,int]):
+    def __init__(self, schema: dict[str, int]):
         pass
 
     def validate_message(self):
         pass
 
-    def store_message_data(self, attribute:Any) -> list[Any]:
+    def store_message_data(self, attribute: Any) -> list[Any]:
         pass
 
     def parse_message(self) -> int:
         pass
-

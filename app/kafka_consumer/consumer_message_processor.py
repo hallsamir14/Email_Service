@@ -11,13 +11,13 @@ It initializes the Kafka Consumer with the required settings and subscribes to t
 The way in which a message is processed will be determined by a variety of methods that will be defined in the class.
 """
 
+
 class ConsumerProcessor:
     def __init__(self):
 
         # Initialize the Config class to load environment variables and set up logging
         settings = ConsumerConfig()
         self.consumer_logger = settings.set_logger_config()
-
 
         # Check if the required environment variables are set, otherwise log a warning/disclaimer
         settings.check_env_variable("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
@@ -36,7 +36,9 @@ class ConsumerProcessor:
             )
             # Subscribe to topic
             self.consumer.subscribe([self.settings.kafka_topic])
-            self.consumer_logger.info("Kafka consumer initialized and subscribed to topics.")
+            self.consumer_logger.info(
+                "Kafka consumer initialized and subscribed to topics."
+            )
         except Exception as init_consumer_error:
             self.consumer_logger.error(
                 f"Failed to initialize Kafka consumer: {init_consumer_error}"
@@ -66,7 +68,9 @@ class ConsumerProcessor:
                         f"End of partition reached {message.partition()}"
                     )
                 elif message.error():
-                    self.consumer_logger.error(f"Error occurred: {message.error().str()}")
+                    self.consumer_logger.error(
+                        f"Error occurred: {message.error().str()}"
+                    )
                     break
             else:
                 message = message.value().decode("utf-8")

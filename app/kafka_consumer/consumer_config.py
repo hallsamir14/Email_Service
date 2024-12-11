@@ -9,7 +9,7 @@ class ConsumerConfig:
 
     def __init__(self):
 
-        # initialize logger as private data member 
+        # initialize logger as private data member
         self.__logger = None
 
         # Load settings from environment variables or use default values
@@ -29,7 +29,7 @@ class ConsumerConfig:
         with open(logging_file, "r") as config_file:
             logging_config = json.load(config_file)
             logging.config.dictConfig(logging_config)
-            
+
         self.__logger = logging.getLogger(__name__)
         return self.__logger
 

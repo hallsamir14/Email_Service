@@ -2,6 +2,7 @@ from typing import Optional
 import mysql.connector
 from mysql.connector import errorcode
 
+
 def set_connection(
     host: Optional[str] = "localhost",
     user: Optional[str] = "root",
@@ -9,7 +10,7 @@ def set_connection(
     database_ID: str = "ecommerce",
 ) -> mysql.connector.connection.MySQLConnection:
     try:
-        #print credentials for development only
+        # print credentials for development only
         print(host + " " + user + " " + password + " " + database_ID)
 
         return mysql.connector.connect(
@@ -25,7 +26,6 @@ def set_connection(
         else:
             print(err)
             return None
-
 
 
 # -----------------------------------------------------------------------------

@@ -5,11 +5,9 @@ from pathlib import Path
 class TemplateEngine:
     def __init__(self):
         # Resolve working directory
-        self.working_dir = (
-            Path(__file__).resolve().parent
-        ) 
+        self.working_dir = Path(__file__).resolve().parent
 
-        #Resolve full path for email templates directory
+        # Resolve full path for email templates directory
         self.working_dir = self.root_dir / "email_templates"
 
     def __read_template(self, filename: str) -> str:
@@ -20,7 +18,7 @@ class TemplateEngine:
 
     def __apply_styles(self, html: str) -> str:
         """Apply advanced CSS styles inline for email compatibility with excellent typography."""
-        styles:dict[str,str] = {
+        styles: dict[str, str] = {
             "body": "font-family: Arial, sans-serif; font-size: 16px; color: #333333; background-color: #ffffff; line-height: 1.5;",
             "h1": "font-size: 24px; color: #333333; font-weight: bold; margin-top: 20px; margin-bottom: 10px;",
             "p": "font-size: 16px; color: #666666; margin: 10px 0; line-height: 1.6;",
@@ -36,9 +34,7 @@ class TemplateEngine:
         # Apply styles to each HTML element, except body
         for tag, style in styles.items():
             # Skip the body style since it's already applied to the <div>
-            if (
-                tag != "body"
-            ):  
+            if tag != "body":
                 styled_html = styled_html.replace(
                     f"<{tag}>", f'<{tag} style="{style}">'
                 )

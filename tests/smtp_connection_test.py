@@ -1,7 +1,7 @@
 import pytest
 import smtplib
 
-from app.utils.smtp_connection import smtp_Settings
+from app.smtp_api.smtp_connection import smtp_Settings
 
 
 class TestSMTP:

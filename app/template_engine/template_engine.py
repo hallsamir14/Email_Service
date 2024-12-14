@@ -5,14 +5,14 @@ from pathlib import Path
 class TemplateEngine:
     def __init__(self):
         # Resolve working directory
-        self.working_dir = Path(__file__).resolve().parent
+        working_dir = Path(__file__).resolve().parent
 
         # Resolve full path for email templates directory
-        self.working_dir = self.root_dir / "email_templates"
+        self.email_template_dir = working_dir / "email_templates"
 
     def __read_template(self, filename: str) -> str:
         """Private method to read template content."""
-        template_path = self.templates_dir / filename
+        template_path = self.email_template_dir / filename
         with open(template_path, "r", encoding="utf-8") as file:
             return file.read()
 
@@ -46,7 +46,7 @@ class TemplateEngine:
         footer = self.__read_template("footer.md")
 
         # Read main template and format it with provided context
-        main_template = self._read_template(f"{template_name}.md")
+        main_template = self.__read_template(f"{template_name}.md")
         main_content = main_template.format(**context)
 
         full_markdown = f"{header}\n{main_content}\n{footer}"

@@ -20,16 +20,25 @@ import base64
 from typing import Any
 
 
-# parser to be used by consumer message processor to read, validate and store message data
+# parser to be used by consumer message processor to read, validate message and store message data
 class parser:
-    def __init__(self, schema: dict[str, int]):
+    #schema param is used to define structure and validation rules for message
+
+    #schema format is needed along with message format, how to implement logic?
+    def __init__(self):
+        pass
+        
+    def set_schema(self, message_format:str = "JSON"):
         pass
 
     def validate_message(self):
         pass
 
+    #To be used in parse_message method, will 
     def store_message_data(self, attribute: Any) -> list[Any]:
         pass
 
-    def parse_message(self) -> int:
+    def parse_json_message(self) -> int:
         pass
+
+

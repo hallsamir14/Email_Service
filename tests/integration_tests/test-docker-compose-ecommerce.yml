@@ -3,7 +3,7 @@ version: "3.8"
 services:
   mysql:
     build:
-      context: ../../mockDB
+      context: ../../sandbox/mock_database
       dockerfile: Dockerfile
     ports:
       - "3306:3306"

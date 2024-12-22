@@ -2,13 +2,26 @@ import sys
 import signal
 from consumer_config import ConsumerConfig
 from confluent_kafka import Consumer, KafkaError
+from enum import Enum
 import logging
+
+
+class message_format(Enum):
+    JSON = "JSON"
+    """
+    Other possible message formats yet to be discussed/branistormed...
+    """
+
 
 # Define the ConsumerProcessor class to process messages from Kafka producer
 """
 Consumer Processor is a wrapper around the Kafka Consumer that subscribes to the commands topic and processes messages.
 It initializes the Kafka Consumer with the required settings and subscribes to the commands topic.
 The way in which a message is processed will be determined by a variety of methods that will be defined in the class.
+"""
+
+"""
+Need to store mapping for message types and associated schema/logic
 """
 
 
@@ -20,10 +33,10 @@ class ConsumerProcessor:
         self.consumer_logger = settings.set_logger_config()
 
         # Check if the required environment variables are set, otherwise log a warning/disclaimer
-        settings.check_env_variable("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
-        settings.check_env_variable("KAFKA_TOPIC", "kafka_commands")
-        settings.check_env_variable("CONSUMER_GROUP", "my_consumer_group")
-        settings.check_env_variable("AUTO_OFFSET_RESET", "earliest")
+        settings.check_env_variable("KAFKA_BOOTSTRAP_SERVERS", f"{settings.kafka_bootstrap_servers}")
+        settings.check_env_variable("KAFKA_TOPIC", f"{settings.kafka_topic}")
+        settings.check_env_variable(f"CONSUMER_GROUP", f"{settings.consumer_group}")
+        settings.check_env_variable(f"AUTO_OFFSET_RESET", f"{settings.auto_offset_reset}")
 
         # Initialize the Kafka Consumer with settings from the `.env` file using Config instance
         try:
@@ -35,7 +48,7 @@ class ConsumerProcessor:
                 }
             )
             # Subscribe to topic
-            self.consumer.subscribe([self.settings.kafka_topic])
+            self.consumer.subscribe([settings.kafka_topic])
             self.consumer_logger.info(
                 "Kafka consumer initialized and subscribed to topics."
             )
@@ -55,8 +68,8 @@ class ConsumerProcessor:
         self.consumer.close()
         sys.exit(0)
 
-    def poll_messages(self, polling_interval: float = 1.0):
-        """Poll messages continuously from the subscribed topics and display them via info log."""
+    # continuously pull
+    def poll_messages(self, polling_interval: float = 1.0) -> str:
         while self:
             # Instance of polling a message w/ polling interval
             message = self.consumer.poll(polling_interval)
@@ -76,21 +89,17 @@ class ConsumerProcessor:
                 message = message.value().decode("utf-8")
                 """Continuously poll for messages from subscribed topics."""
                 try:
+                    # Logic to extract message type
                     self.consumer_logger.info(f"Processing Message:{message}")
                 # keyboard interrupt will stop consumer polling and cleanup consumer
                 except KeyboardInterrupt:
                     self.signal_handler(signal.SIGINT, None)
 
-        # TODO think about how to handle the message to be stored on consumer side
         """
         Why do we want to cache messages on the consumer side if the kafka cluster stores messages persistently?
-        Would would caching messages allow us to do that we can't do with the kafka cluster?
+        What would caching messages allow us to do that we can't do with the kafka cluster?
         
         """
-
-    def store_message(self, message_store_array):
-        """Store the decoded message in an array?"""
-        pass
 
 
 # main function entry block dev testing execution only--------------

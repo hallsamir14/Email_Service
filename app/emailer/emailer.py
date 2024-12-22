@@ -13,10 +13,8 @@ sys.path.append(parent_dir)
 # import SMTP_connection object
 from app.smtp_api.smtp_connection import smtp_Settings
 
-"""
-Emailer class is not necessary as send_email can be used as a stand alone function,
-but is used for readability and associated utility
-"""
+#TODO each instance of an email send will be represented by a unique object 
+#TODO seperate connection and email send logic
 
 
 # emailer object will be used as the engine to send emails

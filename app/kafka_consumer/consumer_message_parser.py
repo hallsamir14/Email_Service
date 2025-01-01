@@ -6,7 +6,7 @@ from consumer_message_processor import message_format
 
 # parser class will parse message and return data in parsed message
 # parser to be used by consumer message processor to read, validate message and store message data
-class parser:
+class Parser:
 
     '''
     - parser constructor will use message type to pull associated data (schema,message format)

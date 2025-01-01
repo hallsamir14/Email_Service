@@ -39,9 +39,8 @@ This architecture ensures that the email service is decoupled from the main appl
 | Source Code File Name          | Description                                                                 |
 |----------------------|-----------------------------------------------------------------------------|
 | app/emailer.py (Incomplete) | Contains the ```emailer()``` class. Each instance of the emailer class represents an engine that sends emails. Each instance of the `emailer` class represents an engine responsible for sending emails. It uses SMTP settings to establish a connection to the SMTP server, formats the email content, and sends the email to the specified recipient. The class ensures that emails are sent reliably and logs the delivery status. |
-| app/utils/database_connection | Contains the ```db_connect()``` class. Each instance of the db_connect class represesnts a connection to a database. |
-|app/utils/smtp_connection.py | Contains the ```smtp_Settings()``` class. Each instance of the smtp_Settings class represents a loaded and managed SMTP config, which can be extracted from enviornmental variables or set as default values. The config is used to establish a connection to an SMTP server in which emails can be sent thorugh.
-|app/utils/template_manager | Contains the ```TemplateManager``` class. Each instance of the TemplateManager class represents a managed configuration for rendering and styling email templates. Each instance of the `TemplateManager` class represents a manager responsible for rendering and styling email templates. It reads template files, applies advanced CSS styles for email compatibility, and renders templates with dynamic content to ensure consistent and professional email formatting. 
+|app/smtp_api/smtp_connection.py | Contains the ```smtp_Settings()``` class. Each instance of the smtp_Settings class represents a loaded and managed SMTP config, which can be extracted from enviornmental variables or set as default values. The config is used to establish a connection to an SMTP server in which emails can be sent thorugh.
+|app/template_engine/template_engine.py | Contains the ```TemplateEngine``` class. Each instance of the TemplateManager class represents a managed configuration for rendering and styling email templates. Each instance of the `TemplateManager` class represents a manager responsible for rendering and styling email templates. It reads template files, applies advanced CSS styles for email compatibility, and renders templates with dynamic content to ensure consistent and professional email formatting. 
 | app/kafka_consumer/consumer_config.py | Contains the ```Config()``` class.Loads kafka and logging configuration to be used by the ```consumer_processor()``` class, providing defaults and logging any unset config variables |
 |app/kakfa_consumer/consumer_processor.py | Contains the ```consumer_processor``` class. A wrapper around kafka's ```consumer()```, providing core processing operations of messages being pulled off a topic. |
 |app/kakfa_consumer/consumer_parser/parser.py | ...
@@ -76,6 +75,16 @@ This architecture ensures that the email service is decoupled from the main appl
      ```
      python main.py
      ```
+### Quick Docker Guide
+For instances where troubleshooting of sandboxing enviornment may be needed or more information about application behavior may be needed. Some useful commands to use when needing to do some digging on container services.
+
+**Access container shell directly (For Containers With Shell Program)**
+
+``` docker exec -it <container-id> sh ```
+
+**Print Container Logs**
+
+``` docker logs <container-id> ```
 
 ## Unit Testing:
 

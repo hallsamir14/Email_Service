@@ -43,9 +43,9 @@ services:
       - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181 #default zookeeper standard zookeeper port
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092 #standard kafka port
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true" # Auto create topic if producer publishes to non existent topic
       KAFKA_NUM_PARTITIONS: 3
       KAFKA_DEFAULT_REPLICATION_FACTOR: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -56,4 +56,3 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-      

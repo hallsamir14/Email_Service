@@ -39,6 +39,8 @@ class ConsumerProcessor:
         settings.check_env_variable(f"AUTO_OFFSET_RESET", f"{settings.auto_offset_reset}")
 
         # Initialize the Kafka Consumer with settings from the `.env` file using Config instance
+        settings.check_kafka_connection(settings.kafka_bootstrap_servers)
+
         try:
             self.consumer = Consumer(
                 {
@@ -48,9 +50,10 @@ class ConsumerProcessor:
                 }
             )
             # Subscribe to topic
+            
             self.consumer.subscribe([settings.kafka_topic])
             self.consumer_logger.info(
-                "Kafka consumer initialized and subscribed to topics."
+                "Kafka consumer initialized"
             )
         except Exception as init_consumer_error:
             self.consumer_logger.error(
@@ -100,6 +103,7 @@ class ConsumerProcessor:
         What would caching messages allow us to do that we can't do with the kafka cluster?
         
         """
+
 
 
 # main function entry block dev testing execution only--------------

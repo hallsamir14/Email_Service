@@ -2,6 +2,8 @@ import json
 import logging, logging.config
 from dotenv import load_dotenv
 import os
+from confluent_kafka.admin import AdminClient
+from confluent_kafka import KafkaException
 
 
 # Config class encapsulate parameters for consumer logging and consumer configuration
@@ -39,3 +41,24 @@ class ConsumerConfig:
             self.__logger.info(
                 f"Environment variable {var_name} not set from environment. Using default value: {default_value}"
             )
+
+    def check_kafka_connection(self, kafka_bootstrap_servers) -> None:
+        """Verify connection to Kafka broker"""
+        try:
+
+            admin_client = AdminClient({'bootstrap.servers': kafka_bootstrap_servers})
+            # Try to get cluster metadata - this will fail if no connection
+
+            cluster_metadata = admin_client.list_topics(timeout=10)
+
+            topics = admin_client.list_topics().topics  #try to pull topics - will fail if no topics.
+
+            if not topics:
+                self.__logger.debug(f"No topics exist via this connection")
+
+            
+            self.__logger.info(f"Successfully connected to Kafka broker. Topics: {topics}")
+        
+        except KafkaException as e:
+            self.__logger.error(f"Failed to connect to Kafka broker: {str(e)}")
+            raise

@@ -64,6 +64,9 @@ def delivery_report(err, msg):
 
 async def send_to_kafka(message_content):
     """Asynchronously sends messages to Kafka topic at regular intervals."""
+
+    settings.check_kafka_connection(settings.kafka_bootstrap_servers)
+    
     while True:
         message = {
             "uuid": str(uuid.uuid4()),

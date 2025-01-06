@@ -30,7 +30,7 @@ class ConsumerProcessor:
 
         # Initialize the Config class to load environment variables and set up logging
         settings = ConsumerConfig()
-        self.consumer_logger = settings.set_logger_config()
+        self.consumer_logger = settings.set_logger_config() #change to *Initialize logger.
 
         # Check if the required environment variables are set, otherwise log a warning/disclaimer
         settings.check_env_variable("KAFKA_BOOTSTRAP_SERVERS", f"{settings.kafka_bootstrap_servers}")

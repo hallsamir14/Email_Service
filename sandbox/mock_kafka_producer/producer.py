@@ -1,110 +1,139 @@
-"""
-This script acts as a Kafka producer, used to mock the behavior of a kafka producer within an distributed application
-It takes messages from command-line input or default messages, encodes them into JSON format, and sends them to a Kafka topic.
-The script uses asynchronous programming to handle message sending continuously.
-
-Features:
-- Configurable Kafka settings using environment variables and a .env file.
-- Robust Kafka connection settings including acknowledgments and retries.
-- Dynamic message content through command-line arguments.
-- Continuous asynchronous message production with controlled polling to manage Kafka message buffer.
-- Graceful shutdown handling to ensure all messages are flushed before termination.
-
-Usage:
-- This script is typically deployed as part of a larger system where Discord bots collect messages,
-  and this producer handles sending those messages to Kafka for further processing or storage.
-- It can be customized to handle various data inputs and integrate with different Kafka topics as required by the system architecture.
-
-Dependencies:
-- confluent_kafka: Provides Kafka client functionality.
-- pydantic_settings: Manages environment-based settings.
-- asyncio: For asynchronous operations.
-- argparse: For parsing command-line options.
-"""
-
 import uuid
 import asyncio
 import json
-import logging, logging.config
+import logging
+import logging.config
 import argparse
 from confluent_kafka import Producer, KafkaError
-from producer_config import Config
+from sandbox.mock_kafka_producer.producer_config import Config
 from datetime import datetime
+from pathlib import Path
 
 
-settings = Config()
+class KafkaProducer:
+    """
+    A class to handle Kafka message production with async capabilities.
+    
+    This class encapsulates the functionality for producing messages to Kafka topics,
+    including connection management, message formatting, and delivery tracking.
+    """
 
-# Load logging configuration from a JSON file to setup structured logging
-with open("logging_config.json", "r") as config_file:
-    logging_config = json.load(config_file)
-    logging.config.dictConfig(logging_config)
+    def __init__(self):
+        """Initialize the KafkaProducer with configuration and logging setup."""
+        self.settings = Config()
+        self._setup_logging()
+        self._initialize_producer()
+        
+    def _setup_logging(self):
+        """Set up logging configuration from JSON file."""
+        config_path = Path(__file__).parent / "logging_config.json"
+        with open(config_path, "r") as config_file:
+            logging_config = json.load(config_file)
+            logging.config.dictConfig(logging_config)
+        self.logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
+    def _initialize_producer(self):
+        """Initialize the Kafka producer with configuration settings."""
+        self.producer = Producer({
+            "bootstrap.servers": self.settings.kafka_bootstrap_servers,
+            "acks": "all",
+            "retries": 5,
+            "retry.backoff.ms": 300,
+        })
 
-# Initialize Kafka Producer with server and retry configurations
-producer = Producer(
-    {
-        "bootstrap.servers": settings.kafka_bootstrap_servers,
-        "acks": "all",  # Ensure all replicas acknowledge the message
-        "retries": 5,  # Retry up to 5 times
-        "retry.backoff.ms": 300,  # Wait 300ms between retries
-    }
-)
-
-
-def delivery_report(err, msg):
-    """Callback function for message delivery reports."""
-    if err:
-        logger.error(f"Message delivery failed: {err}")
-    else:
-        logger.info(
-            f"Message delivered to {msg.topic()} [{msg.partition()}] @ {msg.offset()}"
-        )
-
-
-async def send_to_kafka(message_content):
-    """Asynchronously sends messages to Kafka topic at regular intervals."""
-    while True:
-        message = {
-            "uuid": str(uuid.uuid4()),
-            "content": message_content,
-            "timestamp": datetime.now().isoformat(),
-        }
-        message_json = json.dumps(message)
-        try:
-            producer.produce(
-                settings.commands_topic, message_json, on_delivery=delivery_report
+    def delivery_report(self, err, msg):
+        """
+        Callback function for message delivery reports.
+        
+        Args:
+            err: Error information if delivery failed
+            msg: Message object containing delivery details
+        """
+        if err:
+            self.logger.error(f"Message delivery failed: {err}")
+        else:
+            self.logger.info(
+                f"Message delivered to {msg.topic()} [{msg.partition()}] @ {msg.offset()}"
             )
-            producer.poll(settings.poll_interval)
-        except KafkaError as e:
-            logger.error(f"Kafka exception occurred: {e}")
-        logger.debug(f"Sent message: {message_json}")
-        await asyncio.sleep(1)  # Wait before sending the next message
+
+    async def send_to_kafka(self, message_content, duration=None):
+        """
+        Asynchronously send messages to Kafka topic at regular intervals.
+        
+        Args:
+            message_content: The content to be sent to Kafka
+        """
+        self.settings.check_kafka_connection(self.settings.kafka_bootstrap_servers)
+        start_time = asyncio.get_event_loop().time() #get current time before loop starts
+        
+        while True:
+
+            if duration is not None:        
+                if asyncio.get_event_loop().time() - start_time >= duration:
+                    self.logger.info(f"Message production stopped after {duration} seconds")        #stop sending after the duration specified (test mode)
+                    break
+
+            message = {
+                "uuid": str(uuid.uuid4()),
+                "content": message_content,
+                "timestamp": datetime.now().isoformat(),
+            }
+            message_json = json.dumps(message)
+            
+            try:
+                self.producer.produce(
+                    self.settings.commands_topic,
+                    message_json,
+                    on_delivery=self.delivery_report
+                )
+                self.producer.poll(self.settings.poll_interval)
+            except KafkaError as e:
+                self.logger.error(f"Kafka exception occurred: {e}")
+                
+            self.logger.debug(f"Sent message: {message_json}")
+            await asyncio.sleep(1)
+
+    @staticmethod
+    def parse_arguments():
+        """
+        Parse command line arguments for dynamic message input.
+        
+        Returns:
+            argparse.Namespace: Parsed command line arguments
+        """
+        parser = argparse.ArgumentParser(description="Process messages to Kafka.")
+        parser.add_argument(
+            "message",
+            nargs="?",
+            default="Hello Kafka! Producer online Here",
+            help="Message to send to Kafka"
+        )
+        parser.add_argument(
+            "--duration",
+            type=int,
+            default=5,
+            help="Optional duration in seconds to send messages. If not specified, runs indefinitely."
+        )
+        return parser.parse_args()
+
+    def shutdown(self):
+        """Clean up resources and ensure all messages are sent before shutting down."""
+        self.producer.flush(30)
+        self.logger.info("Flushing remaining messages...")
 
 
-def parse_arguments():
-    """Parse command line arguments for dynamic message input."""
-    parser = argparse.ArgumentParser(description="Process messages to Kafka.")
-    parser.add_argument(
-        "message",
-        nargs="?",
-        default="Hello Kafka! Producer online Here",
-        help="Message to send to Kafka",
-    )
-    return parser.parse_args()
-
-
-# main function entry block dev testing execution only--------------
 def main():
-    args = parse_arguments()
+    producer = KafkaProducer()
+    args = producer.parse_arguments()
+    
     try:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(send_to_kafka(args.message))
+        loop.run_until_complete(producer.send_to_kafka(args.message))
     except KeyboardInterrupt:
-        logger.info("Producer shutdown requested.")
+        producer.logger.info("Producer shutdown requested.")
     finally:
-        producer.flush(30)  # Ensure all messages are sent before shutting down
-        logger.info("Flushing remaining messages...")
+        producer.shutdown()
+
 
 
 if __name__ == "__main__":

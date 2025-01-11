@@ -1,9 +1,10 @@
 import sys
 import signal
-from consumer_config import ConsumerConfig
+from app.kafka_consumer.consumer_config import ConsumerConfig
 from confluent_kafka import Consumer, KafkaError
 from enum import Enum
 import logging
+import time
 
 
 class message_format(Enum):
@@ -30,7 +31,7 @@ class ConsumerProcessor:
 
         # Initialize the Config class to load environment variables and set up logging
         settings = ConsumerConfig()
-        self.consumer_logger = settings.set_logger_config()
+        self.consumer_logger = settings.set_logger_config() #change to *Initialize logger.
 
         # Check if the required environment variables are set, otherwise log a warning/disclaimer
         settings.check_env_variable("KAFKA_BOOTSTRAP_SERVERS", f"{settings.kafka_bootstrap_servers}")
@@ -39,6 +40,8 @@ class ConsumerProcessor:
         settings.check_env_variable(f"AUTO_OFFSET_RESET", f"{settings.auto_offset_reset}")
 
         # Initialize the Kafka Consumer with settings from the `.env` file using Config instance
+        settings.check_kafka_connection(settings.kafka_bootstrap_servers)
+
         try:
             self.consumer = Consumer(
                 {
@@ -48,9 +51,10 @@ class ConsumerProcessor:
                 }
             )
             # Subscribe to topic
+            
             self.consumer.subscribe([settings.kafka_topic])
             self.consumer_logger.info(
-                "Kafka consumer initialized and subscribed to topics."
+                "Kafka consumer initialized"
             )
         except Exception as init_consumer_error:
             self.consumer_logger.error(
@@ -69,11 +73,17 @@ class ConsumerProcessor:
         sys.exit(0)
 
     # continuously pull
-    def poll_messages(self, polling_interval: float = 1.0) -> str:
-        while self:
-            # Instance of polling a message w/ polling interval
+    def poll_messages(self, polling_interval: float = 1.0, test=False) -> str:
+        old_message = None  #create persistent  old message acrosss loop interations , put in if statement?
+
+        while self:  
+
             message = self.consumer.poll(polling_interval)
+
             if message is None:
+                if test==True:      #return the last message polled if ran in test mode
+                    if old_message is not None:
+                        return old_message
                 continue
             if message.error():
                 if message.error().code() == KafkaError._PARTITION_EOF:
@@ -87,6 +97,7 @@ class ConsumerProcessor:
                     break
             else:
                 message = message.value().decode("utf-8")
+                old_message = message
                 """Continuously poll for messages from subscribed topics."""
                 try:
                     # Logic to extract message type
@@ -100,6 +111,12 @@ class ConsumerProcessor:
         What would caching messages allow us to do that we can't do with the kafka cluster?
         
         """
+        """
+        would we process one kafka message at a time and only poll after it has been processed?
+
+        or can we poll and simultaneously process and keep track of everything
+        """
+
 
 
 # main function entry block dev testing execution only--------------

@@ -5,8 +5,9 @@ import logging
 import logging.config
 import argparse
 from confluent_kafka import Producer, KafkaError
-from producer_config import Config
+from sandbox.mock_kafka_producer.producer_config import Config
 from datetime import datetime
+from pathlib import Path
 
 
 class KafkaProducer:
@@ -25,7 +26,8 @@ class KafkaProducer:
         
     def _setup_logging(self):
         """Set up logging configuration from JSON file."""
-        with open("logging_config.json", "r") as config_file:
+        config_path = Path(__file__).parent / "logging_config.json"
+        with open(config_path, "r") as config_file:
             logging_config = json.load(config_file)
             logging.config.dictConfig(logging_config)
         self.logger = logging.getLogger(__name__)
@@ -54,7 +56,7 @@ class KafkaProducer:
                 f"Message delivered to {msg.topic()} [{msg.partition()}] @ {msg.offset()}"
             )
 
-    async def send_to_kafka(self, message_content):
+    async def send_to_kafka(self, message_content, duration=None):
         """
         Asynchronously send messages to Kafka topic at regular intervals.
         
@@ -62,8 +64,15 @@ class KafkaProducer:
             message_content: The content to be sent to Kafka
         """
         self.settings.check_kafka_connection(self.settings.kafka_bootstrap_servers)
+        start_time = asyncio.get_event_loop().time() #get current time before loop starts
         
         while True:
+
+            if duration is not None:        
+                if asyncio.get_event_loop().time() - start_time >= duration:
+                    self.logger.info(f"Message production stopped after {duration} seconds")        #stop sending after the duration specified (test mode)
+                    break
+
             message = {
                 "uuid": str(uuid.uuid4()),
                 "content": message_content,
@@ -99,6 +108,12 @@ class KafkaProducer:
             default="Hello Kafka! Producer online Here",
             help="Message to send to Kafka"
         )
+        parser.add_argument(
+            "--duration",
+            type=int,
+            default=5,
+            help="Optional duration in seconds to send messages. If not specified, runs indefinitely."
+        )
         return parser.parse_args()
 
     def shutdown(self):
@@ -118,6 +133,7 @@ def main():
         producer.logger.info("Producer shutdown requested.")
     finally:
         producer.shutdown()
+
 
 
 if __name__ == "__main__":

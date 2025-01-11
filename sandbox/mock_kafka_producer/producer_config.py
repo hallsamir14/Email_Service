@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from confluent_kafka.admin import AdminClient
 from confluent_kafka import KafkaException
-
+from pathlib import Path
 
 class Config:
 
@@ -26,7 +26,8 @@ class Config:
 
     def set_logger(self, logging_file: str = "logging_config.json"):
         # Load logging configuration from external JSON file
-        with open(logging_file, "r") as config_file:
+        config_path = Path(__file__).parent / logging_file  #get absolute path of logging config
+        with open(config_path, "r") as config_file:
             logging_config = json.load(config_file)
             logging.config.dictConfig(logging_config)
 

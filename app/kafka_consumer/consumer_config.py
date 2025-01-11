@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 from confluent_kafka.admin import AdminClient
 from confluent_kafka import KafkaException
+from pathlib import Path
 
 
 # Config class encapsulate parameters for consumer logging and consumer configuration
@@ -28,7 +29,8 @@ class ConsumerConfig:
 
     def set_logger_config(self, logging_file: str = "logging_config.json"):
         # Load logging configuration from external JSON file
-        with open(logging_file, "r") as config_file:
+        config_path = Path(__file__).parent / logging_file  #get absolute path
+        with open(config_path, "r") as config_file:
             logging_config = json.load(config_file)
             logging.config.dictConfig(logging_config)
 

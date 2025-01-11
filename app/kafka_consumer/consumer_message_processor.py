@@ -1,9 +1,10 @@
 import sys
 import signal
-from consumer_config import ConsumerConfig
+from app.kafka_consumer.consumer_config import ConsumerConfig
 from confluent_kafka import Consumer, KafkaError
 from enum import Enum
 import logging
+import time
 
 
 class message_format(Enum):
@@ -72,11 +73,17 @@ class ConsumerProcessor:
         sys.exit(0)
 
     # continuously pull
-    def poll_messages(self, polling_interval: float = 1.0) -> str:
-        while self:
-            # Instance of polling a message w/ polling interval
+    def poll_messages(self, polling_interval: float = 1.0, test=False) -> str:
+        old_message = None  #create persistent  old message acrosss loop interations , put in for loop?
+
+        while self:  
+
             message = self.consumer.poll(polling_interval)
+
             if message is None:
+                if test==True:      #return the last message polled if ran in test mode
+                    if old_message is not None:
+                        return old_message
                 continue
             if message.error():
                 if message.error().code() == KafkaError._PARTITION_EOF:
@@ -90,6 +97,7 @@ class ConsumerProcessor:
                     break
             else:
                 message = message.value().decode("utf-8")
+                old_message = message
                 """Continuously poll for messages from subscribed topics."""
                 try:
                     # Logic to extract message type
@@ -102,6 +110,11 @@ class ConsumerProcessor:
         Why do we want to cache messages on the consumer side if the kafka cluster stores messages persistently?
         What would caching messages allow us to do that we can't do with the kafka cluster?
         
+        """
+        """
+        would we process one kafka message at a time and only poll after it has been processed?
+
+        or can we poll and simultaneously process and keep track of everything
         """
 
 

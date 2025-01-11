@@ -74,7 +74,7 @@ class ConsumerProcessor:
 
     # continuously pull
     def poll_messages(self, polling_interval: float = 1.0, test=False) -> str:
-        old_message = None  #create persistent  old message acrosss loop interations , put in for loop?
+        old_message = None  #create persistent  old message acrosss loop interations , put in if statement?
 
         while self:  
 

@@ -56,7 +56,7 @@ class KafkaProducer:
                 f"Message delivered to {msg.topic()} [{msg.partition()}] @ {msg.offset()}"
             )
 
-    async def send_to_kafka(self, message_content, duration=None):
+    async def send_to_kafka(self, email, template, message_content, duration=None):
         """
         Asynchronously send messages to Kafka topic at regular intervals.
         
@@ -75,6 +75,8 @@ class KafkaProducer:
 
             message = {
                 "uuid": str(uuid.uuid4()),
+                "email": email,
+                "template": template,
                 "content": message_content,
                 "timestamp": datetime.now().isoformat(),
             }
@@ -103,18 +105,32 @@ class KafkaProducer:
         """
         parser = argparse.ArgumentParser(description="Process messages to Kafka.")
         parser.add_argument(
-            "message",
+            "--email",
+            nargs="?",
+            default="email@gmail.com",
+            help="email"
+        )
+        parser.add_argument(
+            "--template",
+            nargs="?",
+            default="default_template",
+            help="template to be used in email"
+        )
+        parser.add_argument(
+            "--message",
             nargs="?",
             default="Hello Kafka! Producer online Here",
-            help="Message to send to Kafka"
+            help="Message to send to Kafka (vals to input into template)"
         )
         parser.add_argument(
             "--duration",
             type=int,
-            default=5,
+            default=1,
             help="Optional duration in seconds to send messages. If not specified, runs indefinitely."
         )
-        return parser.parse_args()
+
+        args, unknown = parser.parse_known_args()
+        return args
 
     def shutdown(self):
         """Clean up resources and ensure all messages are sent before shutting down."""
@@ -128,7 +144,7 @@ def main():
     
     try:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(producer.send_to_kafka(args.message))
+        loop.run_until_complete(producer.send_to_kafka(args.email, args.template, args.message))
     except KeyboardInterrupt:
         producer.logger.info("Producer shutdown requested.")
     finally:

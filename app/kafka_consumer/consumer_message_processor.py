@@ -106,16 +106,6 @@ class ConsumerProcessor:
                 except KeyboardInterrupt:
                     self.signal_handler(signal.SIGINT, None)
 
-        """
-        Why do we want to cache messages on the consumer side if the kafka cluster stores messages persistently?
-        What would caching messages allow us to do that we can't do with the kafka cluster?
-        
-        """
-        """
-        would we process one kafka message at a time and only poll after it has been processed?
-
-        or can we poll and simultaneously process and keep track of everything
-        """
 
 
 

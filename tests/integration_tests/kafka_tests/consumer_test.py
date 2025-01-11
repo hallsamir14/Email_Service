@@ -31,12 +31,12 @@ class TestConsumer:
     @pytest.fixture(scope="function")
     def produce(self):
         producer = KafkaProducer()
+        args = producer.parse_arguments()
         message = str(uuid.uuid4()) #send unqique identifier as message content
-        duration = 1            #send only 1 message (poll time = 1 sec)
         
         try:
             loop = asyncio.get_event_loop()
-            loop.run_until_complete(producer.send_to_kafka(message, duration))
+            loop.run_until_complete(producer.send_to_kafka(email=args.email, template = args.template ,message_content=message, duration=args.duration)) #send only 1 message (poll time = 1 sec)
         except KeyboardInterrupt:
             producer.logger.info("Producer shutdown requested.")
         finally:
